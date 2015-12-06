@@ -172,32 +172,28 @@ Project.create = function(usersData){
       // ******
       // *** Delete relationships requests/demands
       // ******
-
       // Delete requests relationship for User 1
       var cypherUserFirstRequests = 'MATCH ({username: "'+ usersData.userFirst +'"})-[r:CONNECTION_REQUEST]-(n)'
                                   + 'DELETE r';
       db.queryAsync(cypherUserFirstRequests).then(function(node){
-        resolve();
+        var cypherUserFirstDemands = 'MATCH ({username: "'+ usersData.userFirst +'"})-[r:CONNECTION_REQUEST]->(n)'
+                                  + 'DELETE r';
+        db.queryAsync(cypherUserFirstDemands).then(function(node){
+          var cypherUserSecondRequests = 'MATCH ({username: "'+ usersData.userSecond +'"})-[r:CONNECTION_REQUEST]-(n)'
+                                        + 'DELETE r';
+          db.queryAsync(cypherUserSecondRequests).then(function(node){
+            var cypherUserSecondDemands = 'MATCH ({username: "'+ usersData.userSecond +'"})-[r:CONNECTION_REQUEST]->(n)'
+                                        + 'DELETE r';
+            db.queryAsync(cypherUserSecondDemands).then(function(node){
+                return data;
+            });
+          });
+        });
+        //below is the last/closing bracket
       });
       // Delete demands relationship for User 1
-      var cypherUserFirstDemands = 'MATCH ({username: "'+ usersData.userFirst +'"})-[r:CONNECTION_REQUEST]->(n)'
-                                  + 'DELETE r';
-      db.queryAsync(cypherUserFirstDemands).then(function(node){
-        resolve();
-      });
       // Delete requests relationship for User 2
-      var cypherUserSecondRequests = 'MATCH ({username: "'+ usersData.userSecond +'"})-[r:CONNECTION_REQUEST]-(n)'
-                                    + 'DELETE r';
-      db.queryAsync(cypherUserSecondRequests).then(function(node){
-        resolve();
-      });
       // Delete demands relationship for User 2
-      var cypherUserSecondDemands = 'MATCH ({username: "'+ usersData.userSecond +'"})-[r:CONNECTION_REQUEST]->(n)'
-                                  + 'DELETE r';
-      db.queryAsync(cypherUserSecondDemands).then(function(node){
-        resolve();
-      });
-      return data;
     })
     .then(function(data){
       resolve(node)
